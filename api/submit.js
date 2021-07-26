@@ -38,16 +38,6 @@ module.exports = async (req, res) => {
     // using the connection string environment variable as the argument
     const db = await connectToDatabase(process.env.MONGODB_URI);
 
-    /*
-    const categoriesDB = await db.collection("categories");
-    const categories = await categoriesDB
-      .find({})
-      .project({ _id: 0, id: 1, short_name: 1 })
-      .toArray();
-    console.log("Categories: ", categoriesArray);
-    const 
-    */
-
     // Select the "data" collection from the database
     const collection = await db.collection("submitted");
 
