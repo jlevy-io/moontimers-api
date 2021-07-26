@@ -170,6 +170,7 @@ module.exports = async (req, res) => {
           date: 1,
           url: 1,
           author: 1,
+          subreddit: 1,
           ticker: { $cond: [{ $not: ["$temp"] }, null, "$ticker"] },
         },
       },
