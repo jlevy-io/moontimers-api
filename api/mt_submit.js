@@ -41,6 +41,7 @@ module.exports = async (req, res) => {
       selftext,
       title,
       url,
+      subreddit,
     } = await body;
     // Get a database connection, cached or otherwise,
     // using the connection string environment variable as the argument
@@ -55,6 +56,15 @@ module.exports = async (req, res) => {
       });
     }
 
+    const checkRedditTitle = await collection.find({ title }).toArray();
+
+    if (checkRedditTitle[0]) {
+      return res.status(409).json({
+        message:
+          "Conflict: a timer with the submitted title already exists in the database.",
+      });
+    }
+
     const data = {
       category_id: 2,
       title,
@@ -63,6 +73,7 @@ module.exports = async (req, res) => {
       url,
       reddit_id,
       author,
+      subreddit,
     };
     await collection.insertOne(data);
 
