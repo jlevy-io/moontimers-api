@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "mongodb": "^3.6.10"
+    "dotenv": "^10.0.0",
+    "mongodb": "^3.6.10",
+    "twitter-api-v2": "^1.2.0"
   }
 }
