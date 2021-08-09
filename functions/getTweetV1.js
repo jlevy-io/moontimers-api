@@ -10,6 +10,7 @@ const getTweetV1 = async (tweetID) => {
     const data = await twitterClient.v1.get("statuses/show.json", {
       id: tweetID,
       include_entities: true,
+      tweet_mode: "extended",
     });
     console.log(JSON.stringify(data, null, 2));
 
@@ -21,7 +22,7 @@ const getTweetV1 = async (tweetID) => {
     return {
       tweet_id: data.id_str,
       date: new Date(data.created_at).toISOString(),
-      text: noLinks(data.text),
+      text: noLinks(data.full_text),
       author: {
         id: data.user.id_str,
         name: data.user.name,
@@ -38,7 +39,7 @@ const getTweetV1 = async (tweetID) => {
 
 const getMediaURL = (media) => {
   const mediaTypes = media.map(({ type }) => type);
-  console.log(mediaTypes);
+
   if (mediaTypes.includes("video")) {
     return { media: { type: media[0].type, video_info: media[0].video_info } };
   }

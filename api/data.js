@@ -63,7 +63,9 @@ module.exports = async (req, res) => {
     ).id;
 
     // Select the "data" collection from the database
-    const Data = await db.collection("data");
+    const Data = await db.collection(
+      process.env.VERCEL_ENV === "development" ? "dev_data" : "data"
+    );
 
     // Select the data collection from the database
     // const data = await dataCollection.find({}).toArray();
@@ -171,6 +173,9 @@ module.exports = async (req, res) => {
           url: 1,
           author: 1,
           subreddit: 1,
+          tweet_id: 1,
+          text: 1,
+          media: 1,
           ticker: { $cond: [{ $not: ["$temp"] }, null, "$ticker"] },
         },
       },

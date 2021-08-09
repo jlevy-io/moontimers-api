@@ -1,5 +1,4 @@
-const url = require("url");
-const MongoClient = require("mongodb").MongoClient;
+const connectToDatabase = require("../functions/connectToDatabase");
 const getTweet = require("../functions/getTweetV1");
 
 const approvedTwitterUsers = [
@@ -17,32 +16,10 @@ const approvedTwitterUsers = [
   },
 ];
 
-let cachedDb = null;
-
-async function connectToDatabase(uri) {
-  try {
-    if (cachedDb) {
-      return cachedDb;
-    }
-
-    const client = await MongoClient.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    const db = await client.db(url.parse(uri).pathname.substr(1));
-
-    cachedDb = db;
-    return db;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 const isApproved = (authorID) =>
   approvedTwitterUsers.map(({ id }) => id).includes(authorID);
 
-async function handleTwitter(twitterURL) {
+const handleTwitter = async (twitterURL) => {
   try {
     const pathParts = twitterURL.pathname.split("/");
     const tweetID = pathParts[pathParts.length - 1];
@@ -53,7 +30,42 @@ async function handleTwitter(twitterURL) {
     console.log(err);
     return null;
   }
-}
+};
+
+const addTwitterTimer = async (data, approved) => {
+  try {
+    const db = await connectToDatabase(process.env.MONGODB_URI);
+    const collection = await db.collection(
+      approved
+        ? process.env.VERCEL_ENV === "development"
+          ? "dev_data"
+          : "data"
+        : "submitted"
+    );
+
+    if (approved) {
+      const checkTweetID = await collection
+        .find({ tweet_id: data.tweet_id })
+        .toArray();
+
+      if (checkTweetID[0]) {
+        return {
+          status: 409,
+          message:
+            "Conflict: a timer with the submitted Tweet ID already exists in the database.",
+        };
+      }
+      const user = approvedTwitterUsers.find(({ id }) => id === data.author.id);
+      await collection.insertOne({ ...data, category_id: user.category_id });
+      return { status: 200, message: `A tweet by ${user.name} has been added` };
+    }
+
+    return { status: 100, data };
+  } catch (err) {
+    console.log(err);
+    return { status: 500, message: err, data };
+  }
+};
 
 module.exports = async (req, res) => {
   try {
@@ -62,23 +74,18 @@ module.exports = async (req, res) => {
     // console.log("URL: ", parsed);
     if (parsed.hostname === "twitter.com") {
       const tweetData = await handleTwitter(parsed);
+      if (tweetData) {
+        const dbResponse = await addTwitterTimer(
+          tweetData,
+          isApproved(tweetData.author.id)
+        );
+        return res.status(dbResponse.status).json({ ...dbResponse });
+      }
 
       return res.status(200).json({ data: tweetData });
     }
 
-    /*
-    const db = await connectToDatabase(process.env.MONGODB_URI);
-
-    const collection = await db.collection("submitted");
-
-    if (body) {
-      await collection.insertOne(body);
-      const data = await collection.find({}).toArray();
-      return res.status(200).json({ data });
-    }
-    */
-
-    return;
+    return res.status(204).json({ message: "Nothing happened" });
   } catch (err) {
     console.log(err.stack);
     return res.status(400).json({ message: "Error" });
