@@ -14,6 +14,12 @@ const approvedTwitterUsers = [
     username: "TheRoaringKitty",
     category_id: 4,
   },
+  {
+    id: "22258315",
+    name: "GameStop",
+    username: "GameStop",
+    category_id: 5,
+  },
 ];
 
 const isApproved = (authorID) =>
@@ -60,7 +66,7 @@ const addTwitterTimer = async (data, approved) => {
       return { status: 200, message: `A tweet by ${user.name} has been added` };
     }
 
-    return { status: 100, data };
+    return { status: 200, data };
   } catch (err) {
     console.log(err);
     return { status: 500, message: err, data };
