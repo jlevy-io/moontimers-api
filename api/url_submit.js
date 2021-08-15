@@ -1,4 +1,5 @@
 const connectToDatabase = require("../functions/connectToDatabase");
+const checkSafeURL = require("../functions/checkSafeURL");
 const getTweet = require("../functions/getTweetV1");
 
 const approvedTwitterUsers = [
@@ -77,7 +78,16 @@ module.exports = async (req, res) => {
   try {
     const { body } = await req;
     const parsed = new URL(body.url);
-    // console.log("URL: ", parsed);
+
+    // check if URL is safe with Google Safe Browsing API
+    const isSafe = await checkSafeURL(parsed.href);
+    if (isSafe && isSafe.hasOwnProperty("matches")) {
+      return res.status(400).json({
+        message: `Error: URL with threat type ${isSafe.matches[0].threatType} detected`,
+      });
+    }
+
+    // handle Twitter URL
     if (parsed.hostname === "twitter.com") {
       const tweetData = await handleTwitter(parsed);
       if (tweetData) {
@@ -91,7 +101,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ data: tweetData });
     }
 
-    return res.status(204).json({ message: "Nothing happened" });
+    return res.status(200).json({ message: "Nothing happened" });
   } catch (err) {
     console.log(err.stack);
     return res.status(400).json({ message: "Error" });
