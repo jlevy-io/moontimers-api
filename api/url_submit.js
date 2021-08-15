@@ -31,7 +31,7 @@ const handleTwitter = async (twitterURL) => {
     const pathParts = twitterURL.pathname.split("/");
     const tweetID = pathParts[pathParts.length - 1];
     const tweetData = await getTweet(tweetID);
-    console.log(JSON.stringify(tweetData, null, 2));
+    // console.log(JSON.stringify(tweetData, null, 2));
     return tweetData;
   } catch (err) {
     console.log(err);

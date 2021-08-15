@@ -12,7 +12,7 @@ const getTweetV1 = async (tweetID) => {
       include_entities: true,
       tweet_mode: "extended",
     });
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const media =
       data && data.extended_entities && data.extended_entities.media
