@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     const collection = await db.collection("gme_data");
 
     const { date, open, high, low, close, volume } = body || {};
-    const shortDate = date && date.toISOString().substring(0, 10);
+    const shortDate = date && new Date(date).toISOString().substring(0, 10);
 
     const checkDate = await collection.find({ Date: shortDate }).toArray();
 
