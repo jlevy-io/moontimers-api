@@ -3,13 +3,10 @@ const connectToDatabase = require("../functions/connectToDatabase");
 
 module.exports = async (req, res) => {
   try {
-    console.log("running");
     const { body } = await req;
     const { token } = await body;
     const { GME_DATA_KEY } = process.env;
-    if (req) {
-      console.log("Headers: ", req.headers);
-    }
+
     if (token === GME_DATA_KEY) {
       const db = await connectToDatabase(process.env.MONGODB_URI);
       const collection = await db.collection("gme_data");
