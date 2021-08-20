@@ -1,0 +1,16 @@
+name: Get previous day market data
+uses: szenius/set-timezone@v1.0
+with:
+  timezoneLinux: "America/New_York"
+on:
+  schedule:
+    - cron: "* * * * *"
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get previous day market data
+        run: |
+          curl --request POST \
+          --url 'https://api.moontimers.com/api/gme_data' \
+          --header 'Authorization: Bearer ${{ secrets.TICKER_ACTION_KEY }}'
