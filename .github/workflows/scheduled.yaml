@@ -1,10 +1,7 @@
 name: Get previous day market data
-uses: szenius/set-timezone@v1.0
-with:
-  timezoneLinux: "America/New_York"
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "31 13 * * 2-6"
 jobs:
   cron:
     runs-on: ubuntu-latest
