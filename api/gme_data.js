@@ -15,11 +15,12 @@ module.exports = async (req, res) => {
       const yesterday = ((d) => new Date(d.setDate(d.getDate() - 1)))(
         new Date()
       );
-      console.log("Yesterday: ", yesterday.toISOString().substring(0, 10));
-      const tickerData = await getTickerData(
-        "GME",
-        `${yesterday.toISOString().substring(0, 10)} 12:00:00`
-      );
+
+      const parsed = `${yesterday.toISOString().substring(0, 10)} 12:00:00`;
+
+      console.log("Parsed Date: ", parsed);
+
+      const tickerData = await getTickerData("GME", parsed);
 
       if (tickerData) {
         const { date, open, high, low, close, volume } = tickerData;

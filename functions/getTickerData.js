@@ -10,7 +10,8 @@ const getTickerData = async (ticker, date) => {
     });
     return res && res[0] ? res[0] : null;
   } catch (err) {
-    throw err;
+    console.error(err);
+    return null;
   }
 };
 
