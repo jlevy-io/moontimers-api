@@ -1,6 +1,7 @@
 // Import Dependencies
 const connectToDatabase = require("../functions/connectToDatabase");
 const getTickerData = require("../functions/getTickerData");
+const getLastMarketDate = require("../functions/getLastMarketDate");
 
 module.exports = async (req, res) => {
   try {
@@ -12,11 +13,11 @@ module.exports = async (req, res) => {
       const db = await connectToDatabase(process.env.MONGODB_URI);
       const collection = await db.collection("gme_data");
 
-      const yesterday = ((d) => new Date(d.setDate(d.getDate() - 1)))(
-        new Date()
-      );
+      const lastMarketDate = getLastMarketDate();
 
-      const parsed = `${yesterday.toISOString().substring(0, 10)} 12:00:00`;
+      const parsed = `${lastMarketDate
+        .toISOString()
+        .substring(0, 10)} 12:00:00`;
 
       console.log("Parsed Date: ", parsed);
 

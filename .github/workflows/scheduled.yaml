@@ -1,7 +1,7 @@
 name: Get previous day market data
 on:
   schedule:
-    - cron: "31 13 * * 2-6"
+    - cron: "31 13 * * 1-5"
 jobs:
   cron:
     runs-on: ubuntu-latest

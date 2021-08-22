@@ -1,12 +1,11 @@
-const yahooFinance = require("yahoo-finance2").default;
+const yahooFinance = require("yahoo-finance");
 
 const getTickerData = async (ticker, date) => {
   try {
-    const res = await yahooFinance.historical(ticker, {
-      period1: date,
-      period2: date,
-      includeAdjustedClose: false,
-      interval: "1d",
+    const res = await yahooFinance.historical({
+      symbol: ticker,
+      from: date,
+      to: date,
     });
     return res && res[0] ? res[0] : null;
   } catch (err) {
