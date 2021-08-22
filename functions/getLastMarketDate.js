@@ -11,3 +11,5 @@ const getLastMarketDate = () => {
   workingDate.setDate(todayDate - 1);
   return workingDate;
 };
+
+module.exports = getLastMarketDate;
