@@ -77,7 +77,14 @@ module.exports = async (req, res) => {
     };
     await collection.insertOne(data);
 
-    return res.status(200).json({ data });
+    const countAuthorSubmissions = await collection.find({ author }).toArray();
+
+    return res
+      .status(200)
+      .json({
+        author,
+        count: countAuthorSubmissions && countAuthorSubmissions.length,
+      });
   } catch (err) {
     console.log(err.stack);
     res.status(400).json({ message: "Error" });
